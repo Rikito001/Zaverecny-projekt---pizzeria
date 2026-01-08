@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Sprava objednavok</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <h1>Sprava objednavok</h1>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Zakaznik</th>
+                    <th>Suma</th>
+                    <th>Stav</th>
+                    <th>Datum</th>
+                    <th>Akcie</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="order : ${orders}">
+                    <td th:text="${order.id}">1</td>
+                    <td>
+                        <span th:text="${order.user.fullName}">Zakaznik</span><br>
+                        <small th:text="${order.deliveryAddress + ', ' + order.deliveryCity}">Adresa</small>
+                    </td>
+                    <td th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2) + ' EUR'}">0.00</td>
+                    <td>
+                        <form th:action="@{/admin/objednavky/{id}/stav(id=${order.id})}" method="post" class="inline-form">
+                            <select name="status" class="form-control-small" onchange="this.form.submit()">
+                                <option th:each="status : ${statuses}" 
+                                        th:value="${status}" 
+                                        th:text="${status.displayName}"
+                                        th:selected="${status == order.status}"></option>
+                            </select>
+                        </form>
+                    </td>
+                    <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}">Datum</td>
+                    <td>
+                        <a th:href="@{/moje-objednavky/{id}(id=${order.id})}" class="btn btn-small">Detail</a>
+                        <form th:if="${order.status.active}" 
+                              th:action="@{/admin/objednavky/{id}/zrusit(id=${order.id})}" method="post" class="inline">
+                            <button type="submit" class="btn btn-danger btn-small" 
+                                    onclick="return confirm('Naozaj zrusit objednavku?')">Zrusit</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <a th:href="@{/admin}" class="btn btn-secondary">Spat na dashboard</a>
+    </div>
+</body>
+</html>

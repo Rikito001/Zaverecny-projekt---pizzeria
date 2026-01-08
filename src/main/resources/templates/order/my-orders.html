@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Moje objednavky</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <h1>Moje objednavky</h1>
+
+        <div th:if="${orders == null or orders.content.isEmpty()}" class="no-orders">
+            <p>Zatial nemate ziadne objednavky.</p>
+            <a th:href="@{/pizza}" class="btn btn-primary">Objednat pizzu</a>
+        </div>
+
+        <div th:if="${orders != null and !orders.content.isEmpty()}">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Cislo</th>
+                        <th>Datum</th>
+                        <th>Polozky</th>
+                        <th>Suma</th>
+                        <th>Stav</th>
+                        <th>Akcie</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="order : ${orders.content}">
+                        <td th:text="'#' + ${order.id}">ID</td>
+                        <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}">Datum</td>
+                        <td th:text="${order.totalItems + ' ks'}">Polozky</td>
+                        <td th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2) + ' EUR'}">Suma</td>
+                        <td>
+                            <span class="status-badge" 
+                                  th:classappend="${order.status.name()}"
+                                  th:text="${order.status.displayName}">Stav</span>
+                        </td>
+                        <td>
+                            <a th:href="@{/moje-objednavky/{id}(id=${order.id})}" class="btn btn-sm btn-primary">Detail</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <nav th:if="${orders.totalPages > 1}" class="pagination">
+                <a th:if="${currentPage > 0}" 
+                   th:href="@{/moje-objednavky(page=${currentPage - 1})}" 
+                   class="btn btn-secondary">&laquo;</a>
+                
+                <span th:text="'Strana ' + (${currentPage} + 1) + ' z ' + ${orders.totalPages}"></span>
+                
+                <a th:if="${currentPage < orders.totalPages - 1}" 
+                   th:href="@{/moje-objednavky(page=${currentPage + 1})}" 
+                   class="btn btn-secondary">&raquo;</a>
+            </nav>
+        </div>
+    </div>
+</body>
+</html>

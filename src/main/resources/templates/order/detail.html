@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title th:text="'Objednavka #' + ${order.id}">Detail objednavky</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="breadcrumb">
+            <a th:href="@{/moje-objednavky}">Moje objednavky</a> &raquo; 
+            <span th:text="'Objednavka #' + ${order.id}">Detail</span>
+        </div>
+
+        <h1 th:text="'Objednavka #' + ${order.id}">Detail objednavky</h1>
+
+        <div class="order-detail">
+            <div class="order-info">
+                <div class="info-section">
+                    <h3>Informacie o objednavke</h3>
+                    <p><strong>Cislo:</strong> #<span th:text="${order.id}">1</span></p>
+                    <p><strong>Datum vytvorenia:</strong> 
+                        <span th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}">datum</span>
+                    </p>
+                    <p><strong>Stav:</strong> 
+                        <span class="status-badge" 
+                              th:classappend="${order.status.name()}"
+                              th:text="${order.status.displayName}">Stav</span>
+                    </p>
+                </div>
+
+                <div class="info-section">
+                    <h3>Dorucenie</h3>
+                    <p><strong>Adresa:</strong> <span th:text="${order.deliveryAddress}">Adresa</span></p>
+                    <p><strong>Mesto:</strong> <span th:text="${order.deliveryCity}">Mesto</span></p>
+                    <p><strong>Telefon:</strong> <span th:text="${order.deliveryPhone}">Telefon</span></p>
+                    <p th:if="${order.note}"><strong>Poznamka:</strong> <span th:text="${order.note}">Poznamka</span></p>
+                </div>
+
+                <div class="info-section" th:if="${order.cook != null or order.courier != null}">
+                    <h3>Spracovanie</h3>
+                    <p th:if="${order.cook != null}"><strong>Kuchar:</strong> 
+                        <span th:text="${order.cook.fullName}">Kuchar</span>
+                    </p>
+                    <p th:if="${order.courier != null}"><strong>Kurier:</strong> 
+                        <span th:text="${order.courier.fullName}">Kurier</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="order-items">
+                <h3>Polozky objednavky</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Pizza</th>
+                            <th>Velkost</th>
+                            <th>Ingrediencie</th>
+                            <th>Cena/ks</th>
+                            <th>Pocet</th>
+                            <th>Spolu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${order.items}">
+                            <td th:text="${item.pizzaName}">Pizza</td>
+                            <td th:text="${item.sizeName}">Velkost</td>
+                            <td th:text="${item.ingredients}">Ingrediencie</td>
+                            <td th:text="${#numbers.formatDecimal(item.unitPrice, 1, 2) + ' EUR'}">Cena</td>
+                            <td th:text="${item.quantity}">1</td>
+                            <td th:text="${#numbers.formatDecimal(item.totalPrice, 1, 2) + ' EUR'}">Spolu</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5" class="text-right"><strong>Celkom:</strong></td>
+                            <td><strong th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2) + ' EUR'}">0.00 EUR</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="order-actions" th:if="${order.status.cancellable}">
+                <form th:action="@{/moje-objednavky/{id}/zrusit(id=${order.id})}" method="post">
+                    <button type="submit" class="btn btn-danger" 
+                            onclick="return confirm('Naozaj chcete zrusit tuto objednavku?')">
+                        Zrusit objednavku
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="back-link">
+            <a th:href="@{/moje-objednavky}" class="btn btn-secondary">&laquo; Spat na zoznam</a>
+        </div>
+    </div>
+</body>
+</html>

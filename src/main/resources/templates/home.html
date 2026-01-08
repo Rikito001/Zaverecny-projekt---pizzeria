@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Domov</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <section class="hero">
+            <h1>Vitajte v Pizzerii U Talianov</h1>
+            <p>Najlepsie pizze v meste, pripravene s laskou a cerstrvymi surovinami</p>
+            <a th:href="@{/pizza}" class="btn btn-primary btn-large">Pozriet ponuku</a>
+        </section>
+
+        <section class="featured-pizzas">
+            <h2>Nase obľubene pizze</h2>
+            
+            <div class="pizza-grid">
+                <article th:each="pizza : ${pizzas}" th:if="${#lists.size(pizzas) <= 6}" class="pizza-card">
+                    <img th:src="${pizza.imageUrl != null ? pizza.imageUrl : '/images/pizza-default.jpg'}" 
+                         th:alt="${pizza.name}" class="pizza-image">
+                    <div class="pizza-content">
+                        <h3 th:text="${pizza.name}">Nazov pizze</h3>
+                        <p th:text="${pizza.description}" class="pizza-description">Popis pizze</p>
+                        
+                        <div class="pizza-tags" th:if="${!pizza.tags.isEmpty()}">
+                            <span th:each="tag : ${pizza.tags}" 
+                                  th:text="${tag.name}"
+                                  th:style="'background-color:' + ${tag.color}"
+                                  class="tag"></span>
+                        </div>
+                        
+                        <div class="pizza-price">
+                            <span>od </span>
+                            <strong th:text="${#numbers.formatDecimal(pizza.lowestPrice, 1, 2) + ' EUR'}">0.00 EUR</strong>
+                        </div>
+                        
+                        <a th:href="@{/pizza/{slug}(slug=${pizza.slug})}" class="btn btn-secondary">Detail</a>
+                    </div>
+                </article>
+            </div>
+            
+            <div class="text-center" th:if="${#lists.size(pizzas) > 6}">
+                <a th:href="@{/pizza}" class="btn btn-primary">Zobrazit vsetky pizze</a>
+            </div>
+        </section>
+
+        <section class="about">
+            <h2>O nas</h2>
+            <p>Pizzeria U Talianov je rodinna restauracia s tradicnou recepturou z Talianska. 
+               Pouzivame len najkvalitnejsie suroviny a nase cesto kysi 48 hodin pre dokonalu chut.</p>
+        </section>
+    </div>
+</body>
+</html>

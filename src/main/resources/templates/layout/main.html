@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE - Pizzeria">Pizzeria</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a th:href="@{/}" class="navbar-brand">Pizzeria U Talianov</a>
+            
+            <ul class="navbar-nav">
+                <li><a th:href="@{/pizza}">Ponuka</a></li>
+                
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/kosik}">Kosik 
+                        <span class="badge" th:if="${cartCount != null and cartCount > 0}" 
+                              th:text="${cartCount}"></span>
+                    </a>
+                </li>
+                
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/moje-objednavky}">Moje objednavky</a>
+                </li>
+                
+                <li sec:authorize="hasAnyRole('KUCHAR', 'ADMIN')">
+                    <a th:href="@{/kuchyna}">Kuchyna</a>
+                </li>
+                
+                <li sec:authorize="hasAnyRole('KURIER', 'ADMIN')">
+                    <a th:href="@{/rozvoz}">Rozvoz</a>
+                </li>
+                
+                <li sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin}">Administracia</a>
+                </li>
+            </ul>
+            
+            <ul class="navbar-auth">
+                <li sec:authorize="isAnonymous()">
+                    <a th:href="@{/prihlasenie}">Prihlasenie</a>
+                </li>
+                <li sec:authorize="isAnonymous()">
+                    <a th:href="@{/registracia}">Registracia</a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/profil}">
+                        <span sec:authentication="principal.fullName">Pouzivatel</span>
+                    </a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <form th:action="@{/odhlasenie}" method="post" style="display:inline;">
+                        <button type="submit" class="btn-link">Odhlasit</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        
+        <div layout:fragment="content"></div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Pizzeria U Talianov. Vsetky prava vyhradene.</p>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

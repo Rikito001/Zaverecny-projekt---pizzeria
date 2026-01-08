@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Ponuka pizz</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <h1>Nasa ponuka</h1>
+
+        <div class="search-filter-section">
+            <form th:action="@{/pizza}" method="get" class="search-form">
+                <input type="text" name="search" placeholder="Hladat pizzu..." 
+                       th:value="${searchTerm}" class="search-input">
+                <button type="submit" class="btn btn-primary">Hladat</button>
+                <a th:href="@{/pizza}" th:if="${searchTerm != null}" class="btn btn-secondary">Zrusit</a>
+            </form>
+
+            <div class="tag-filter">
+                <a th:href="@{/pizza}" 
+                   th:classappend="${selectedTag == null} ? 'active'" 
+                   class="tag-btn">Vsetky</a>
+                <a th:each="tag : ${tags}" 
+                   th:href="@{/pizza(tagId=${tag.id})}"
+                   th:text="${tag.name}"
+                   th:style="'background-color:' + ${tag.color}"
+                   th:classappend="${selectedTag == tag.id} ? 'active'"
+                   class="tag-btn"></a>
+            </div>
+        </div>
+
+        <div sec:authorize="hasRole('ADMIN')" class="admin-actions">
+            <a th:href="@{/pizza/nova}" class="btn btn-success">Pridat novu pizzu</a>
+        </div>
+
+        <div class="pizza-grid" th:if="${pizzas != null and !pizzas.isEmpty()}">
+            <article th:each="pizza : ${pizzas}" class="pizza-card">
+                <img th:src="${pizza.imageUrl != null ? pizza.imageUrl : '/images/pizza-default.jpg'}" 
+                     th:alt="${pizza.name}" class="pizza-image">
+                <div class="pizza-content">
+                    <h2 th:text="${pizza.name}">Nazov pizze</h2>
+                    <p th:text="${pizza.description}" class="pizza-description">Popis</p>
+                    
+                    <div class="pizza-tags" th:if="${!pizza.tags.isEmpty()}">
+                        <span th:each="tag : ${pizza.tags}" 
+                              th:text="${tag.name}"
+                              th:style="'background-color:' + ${tag.color}"
+                              class="tag"></span>
+                    </div>
+                    
+                    <div class="pizza-sizes">
+                        <div th:each="size : ${pizza.sizes}" class="size-option">
+                            <span th:text="${size.sizeName}">Velkost</span>: 
+                            <strong th:text="${#numbers.formatDecimal(size.price, 1, 2) + ' EUR'}">0.00</strong>
+                            <span th:if="${size.diameterCm != null}" th:text="'(' + ${size.diameterCm} + ' cm)'"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="pizza-actions">
+                        <a th:href="@{/pizza/{slug}(slug=${pizza.slug})}" class="btn btn-primary">Detail</a>
+                        
+                        <div sec:authorize="hasRole('ADMIN')" class="admin-btns">
+                            <a th:href="@{/pizza/{id}/upravit(id=${pizza.id})}" class="btn btn-warning">Upravit</a>
+                            <form th:action="@{/pizza/{id}/vymazat(id=${pizza.id})}" method="post" 
+                                  onsubmit="return confirm('Naozaj chcete vymazat tuto pizzu?')">
+                                <button type="submit" class="btn btn-danger">Vymazat</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <div th:if="${pizzas == null or pizzas.isEmpty()}" class="no-results">
+            <p>Ziadne pizze neboli najdene.</p>
+        </div>
+
+        <nav th:if="${totalPages != null and totalPages > 1}" class="pagination">
+            <a th:if="${currentPage > 0}" 
+               th:href="@{/pizza(page=${currentPage - 1})}" 
+               class="btn btn-secondary">&laquo; Predchadzajuca</a>
+            
+            <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                <a th:href="@{/pizza(page=${i})}" 
+                   th:text="${i + 1}"
+                   th:classappend="${i == currentPage} ? 'active'"
+                   class="page-link"></a>
+            </span>
+            
+            <a th:if="${currentPage < totalPages - 1}" 
+               th:href="@{/pizza(page=${currentPage + 1})}" 
+               class="btn btn-secondary">Dalsia &raquo;</a>
+        </nav>
+    </div>
+</body>
+</html>

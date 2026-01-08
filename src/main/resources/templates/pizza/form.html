@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title th:text="${pizza.id != null} ? 'Upravit pizzu' : 'Nova pizza'">Formular pizze</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <h1 th:text="${pizza.id != null} ? 'Upravit pizzu' : 'Pridat novu pizzu'">Formular</h1>
+
+        <form th:action="${pizza.id != null} ? @{/pizza/{id}(id=${pizza.id})} : @{/pizza}" 
+              th:object="${pizza}" method="post" class="form">
+            
+            <input type="hidden" th:field="*{id}"/>
+
+            <div class="form-group">
+                <label for="name">Nazov pizze: *</label>
+                <input type="text" id="name" th:field="*{name}" class="form-control" required>
+                <div th:if="${#fields.hasErrors('name')}" class="error" th:errors="*{name}"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Popis:</label>
+                <textarea id="description" th:field="*{description}" class="form-control" rows="3"></textarea>
+                <div th:if="${#fields.hasErrors('description')}" class="error" th:errors="*{description}"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="imageUrl">URL obrazku:</label>
+                <input type="url" id="imageUrl" th:field="*{imageUrl}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Ingrediencie:</label>
+                <div class="checkbox-group">
+                    <div th:each="ingredient : ${ingredients}" class="checkbox-item">
+                        <label>
+                            <input type="checkbox" th:field="*{ingredients}" th:value="${ingredient.id}">
+                            <span th:text="${ingredient.name}">Ingrediencia</span>
+                            <small th:if="${ingredient.allergens != null}" 
+                                   th:text="'(Alergeny: ' + ${ingredient.allergens} + ')'"></small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Tagy:</label>
+                <div class="checkbox-group">
+                    <div th:each="tag : ${tags}" class="checkbox-item">
+                        <label>
+                            <input type="checkbox" th:field="*{tags}" th:value="${tag.id}">
+                            <span th:text="${tag.name}" 
+                                  th:style="'background-color:' + ${tag.color} + '; padding: 2px 8px; border-radius: 4px;'"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" th:field="*{active}">
+                    Aktivna (zobrazena v ponuke)
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <a th:href="@{/pizza}" class="btn btn-secondary">Zrusit</a>
+                <button type="submit" class="btn btn-primary" 
+                        th:text="${pizza.id != null} ? 'Ulozit zmeny' : 'Pridat pizzu'">Ulozit</button>
+            </div>
+        </form>
+
+        <div th:if="${pizza.id != null}" class="sizes-section">
+            <h2>Velkosti pizze</h2>
+            
+            <table th:if="${!pizza.sizes.isEmpty()}" class="table">
+                <thead>
+                    <tr>
+                        <th>Velkost</th>
+                        <th>Priemer</th>
+                        <th>Cena</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="size : ${pizza.sizes}">
+                        <td th:text="${size.sizeName}">Velkost</td>
+                        <td th:text="${size.diameterCm != null ? size.diameterCm + ' cm' : '-'}">Priemer</td>
+                        <td th:text="${#numbers.formatDecimal(size.price, 1, 2) + ' EUR'}">Cena</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Pridat velkost:</h3>
+            <form th:action="@{/pizza/{id}/velkost(id=${pizza.id})}" method="post" class="inline-form">
+                <div class="form-row">
+                    <input type="text" name="sizeName" placeholder="Nazov (napr. Mala)" required class="form-control">
+                    <input type="number" name="price" placeholder="Cena" step="0.01" min="0.01" required class="form-control">
+                    <input type="number" name="diameterCm" placeholder="Priemer (cm)" min="20" max="60" class="form-control">
+                    <button type="submit" class="btn btn-success">Pridat</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

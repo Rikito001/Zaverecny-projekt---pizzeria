@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Kuchyna</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <h1>Kuchyna 
+            <span th:if="${newOrdersCount > 0}" class="badge badge-danger" th:text="${newOrdersCount + ' novych'}"></span>
+        </h1>
+
+        <div class="kitchen-grid">
+            <section class="orders-section">
+                <h2>Cakajuce objednavky</h2>
+                <div th:if="${pendingOrders.isEmpty()}" class="no-orders">
+                    <p>Ziadne cakajuce objednavky</p>
+                </div>
+                <div th:each="order : ${pendingOrders}" class="order-card pending">
+                    <div class="order-header">
+                        <span class="order-id">#<span th:text="${order.id}">1</span></span>
+                        <span class="order-time" th:text="${#temporals.format(order.createdAt, 'HH:mm')}">12:00</span>
+                    </div>
+                    <div class="order-items">
+                        <div th:each="item : ${order.items}" class="order-item">
+                            <span th:text="${item.quantity + 'x ' + item.pizzaName + ' (' + item.sizeName + ')'}">Pizza</span>
+                        </div>
+                    </div>
+                    <div th:if="${order.note}" class="order-note">
+                        <strong>Poznamka:</strong> <span th:text="${order.note}">Poznamka</span>
+                    </div>
+                    <form th:action="@{/kuchyna/{id}/prijat(id=${order.id})}" method="post">
+                        <button type="submit" class="btn btn-success btn-block">Prijat objednavku</button>
+                    </form>
+                </div>
+            </section>
+
+            <section class="orders-section">
+                <h2>Pripravuju sa</h2>
+                <div th:if="${preparingOrders.isEmpty()}" class="no-orders">
+                    <p>Ziadne rozpracovane objednavky</p>
+                </div>
+                <div th:each="order : ${preparingOrders}" class="order-card preparing">
+                    <div class="order-header">
+                        <span class="order-id">#<span th:text="${order.id}">1</span></span>
+                        <span class="order-time" th:text="${#temporals.format(order.createdAt, 'HH:mm')}">12:00</span>
+                    </div>
+                    <div class="order-items">
+                        <div th:each="item : ${order.items}" class="order-item">
+                            <span th:text="${item.quantity + 'x ' + item.pizzaName + ' (' + item.sizeName + ')'}">Pizza</span>
+                        </div>
+                    </div>
+                    <div class="order-cook">
+                        <small>Pripravuje: <span th:text="${order.cook?.fullName}">Kuchar</span></small>
+                    </div>
+                    <form th:action="@{/kuchyna/{id}/hotova(id=${order.id})}" method="post">
+                        <button type="submit" class="btn btn-primary btn-block">Oznacit ako hotovu</button>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+</html>

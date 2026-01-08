@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Nova objednavka</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <h1>Dokoncenie objednavky</h1>
+
+        <div class="checkout-container">
+            <div class="order-summary">
+                <h2>Zhrnutie objednavky</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Pizza</th>
+                            <th>Velkost</th>
+                            <th>Pocet</th>
+                            <th>Cena</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${cartItems}">
+                            <td th:text="${item.pizzaSize.pizza.name}">Pizza</td>
+                            <td th:text="${item.pizzaSize.sizeName}">Velkost</td>
+                            <td th:text="${item.quantity}">1</td>
+                            <td th:text="${#numbers.formatDecimal(item.totalPrice, 1, 2) + ' EUR'}">0.00</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3"><strong>Celkom:</strong></td>
+                            <td><strong th:text="${#numbers.formatDecimal(cartTotal, 1, 2) + ' EUR'}">0.00 EUR</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="delivery-form">
+                <h2>Udaje pre dorucenie</h2>
+                <form th:action="@{/objednavka/vytvorit}" method="post" class="form">
+                    <div class="form-group">
+                        <label for="deliveryAddress">Adresa dorucenia: *</label>
+                        <input type="text" id="deliveryAddress" name="deliveryAddress" 
+                               th:value="${user.address}" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="deliveryCity">Mesto: *</label>
+                        <input type="text" id="deliveryCity" name="deliveryCity" 
+                               th:value="${user.city}" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="deliveryPhone">Telefon: *</label>
+                        <input type="tel" id="deliveryPhone" name="deliveryPhone" 
+                               th:value="${user.phone}" class="form-control" required
+                               placeholder="+421 XXX XXX XXX">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="note">Poznamka k objednavke:</label>
+                        <textarea id="note" name="note" class="form-control" rows="3"
+                                  placeholder="Napr. bez cibule, zazvonit 2x..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <a th:href="@{/kosik}" class="btn btn-secondary">Spat do kosika</a>
+                        <button type="submit" class="btn btn-primary btn-large">Odoslat objednavku</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

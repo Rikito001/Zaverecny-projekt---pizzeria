@@ -3,15 +3,15 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/main}">
 <head>
-    <title>Stranka nenajdena</title>
+    <title>Stránka nenájdená</title>
 </head>
 <body>
     <div layout:fragment="content">
         <div class="error-page">
             <h1>404</h1>
-            <h2>Stranka nebola najdena</h2>
-            <p th:text="${error ?: 'Pozadovana stranka neexistuje.'}">Chyba</p>
-            <a th:href="@{/}" class="btn btn-primary">Spat na hlavnu stranku</a>
+            <h2>Stránka nenájdená</h2>
+            <p>Prepáčte, požadovaná stránka neexistuje alebo bola odstránená.</p>
+            <a th:href="@{/}" class="btn btn-primary">Späť na hlavnú stránku</a>
         </div>
     </div>
 </body>

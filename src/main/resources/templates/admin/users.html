@@ -3,11 +3,11 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/main}">
 <head>
-    <title>Sprava pouzivatelov</title>
+    <title>Správa používateľov</title>
 </head>
 <body>
     <div layout:fragment="content">
-        <h1>Sprava pouzivatelov</h1>
+        <h1>Správa používateľov</h1>
 
         <table class="table">
             <thead>
@@ -17,7 +17,7 @@
                     <th>Email</th>
                     <th>Rola</th>
                     <th>Stav</th>
-                    <th>Registracia</th>
+                    <th>Registrácia</th>
                     <th>Akcie</th>
                 </tr>
             </thead>
@@ -37,21 +37,21 @@
                         </form>
                     </td>
                     <td>
-                        <span th:if="${user.active}" class="status-active">Aktivny</span>
-                        <span th:if="${!user.active}" class="status-inactive">Neaktivny</span>
+                        <span th:if="${user.active}" class="status-active">Aktívny</span>
+                        <span th:if="${!user.active}" class="status-inactive">Neaktívny</span>
                     </td>
-                    <td th:text="${#temporals.format(user.createdAt, 'dd.MM.yyyy')}">Datum</td>
+                    <td th:text="${#temporals.format(user.createdAt, 'dd.MM.yyyy')}">Dátum</td>
                     <td>
                         <form th:action="@{/admin/pouzivatelia/{id}/aktivovat(id=${user.id})}" method="post" class="inline">
                             <button type="submit" class="btn btn-small" 
-                                    th:text="${user.active} ? 'Deaktivovat' : 'Aktivovat'">Prepnut</button>
+                                    th:text="${user.active} ? 'Deaktivovať' : 'Aktivovať'">Prepnúť</button>
                         </form>
                     </td>
                 </tr>
             </tbody>
         </table>
 
-        <a th:href="@{/admin}" class="btn btn-secondary">Spat na dashboard</a>
+        <a th:href="@{/admin}" class="btn btn-secondary">← Späť na dashboard</a>
     </div>
 </body>
 </html>

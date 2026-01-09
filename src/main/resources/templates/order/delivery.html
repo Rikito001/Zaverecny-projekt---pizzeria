@@ -11,9 +11,9 @@
 
         <div class="delivery-grid">
             <section class="orders-section">
-                <h2>Hotove na vyzdvihnutie</h2>
+                <h2>Hotové na vyzdvihnutie</h2>
                 <div th:if="${readyOrders.isEmpty()}" class="no-orders">
-                    <p>Ziadne hotove objednavky</p>
+                    <p>Žiadne hotové objednávky</p>
                 </div>
                 <div th:each="order : ${readyOrders}" class="order-card ready">
                     <div class="order-header">
@@ -24,7 +24,7 @@
                         <strong>Adresa:</strong><br>
                         <span th:text="${order.deliveryAddress}">Adresa</span><br>
                         <span th:text="${order.deliveryCity}">Mesto</span><br>
-                        <strong>Tel:</strong> <span th:text="${order.deliveryPhone}">Telefon</span>
+                        <strong>Tel:</strong> <span th:text="${order.deliveryPhone}">Telefón</span>
                     </div>
                     <div class="order-items">
                         <div th:each="item : ${order.items}" class="order-item">
@@ -32,10 +32,10 @@
                         </div>
                     </div>
                     <div class="order-total">
-                        <strong>Suma:</strong> <span th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2) + ' EUR'}">0.00</span>
+                        <strong>Suma:</strong> <span th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2) + ' €'}">0.00</span>
                     </div>
                     <form th:action="@{/rozvoz/{id}/prevziat(id=${order.id})}" method="post">
-                        <button type="submit" class="btn btn-success btn-block">Prevziat na dorucenie</button>
+                        <button type="submit" class="btn btn-success btn-block">Prevziať na doručenie</button>
                     </form>
                 </div>
             </section>
@@ -43,7 +43,7 @@
             <section class="orders-section">
                 <h2>Na ceste</h2>
                 <div th:if="${deliveringOrders.isEmpty()}" class="no-orders">
-                    <p>Ziadne objednavky na ceste</p>
+                    <p>Žiadne objednávky na ceste</p>
                 </div>
                 <div th:each="order : ${deliveringOrders}" class="order-card delivering">
                     <div class="order-header">
@@ -53,16 +53,16 @@
                         <strong>Adresa:</strong><br>
                         <span th:text="${order.deliveryAddress}">Adresa</span><br>
                         <span th:text="${order.deliveryCity}">Mesto</span><br>
-                        <strong>Tel:</strong> <a th:href="'tel:' + ${order.deliveryPhone}" th:text="${order.deliveryPhone}">Telefon</a>
+                        <strong>Tel:</strong> <a th:href="'tel:' + ${order.deliveryPhone}" th:text="${order.deliveryPhone}">Telefón</a>
                     </div>
                     <div class="order-total">
-                        <strong>Suma na zaplatenie:</strong> <span th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2) + ' EUR'}">0.00</span>
+                        <strong>Suma na zaplatenie:</strong> <span th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2) + ' €'}">0.00</span>
                     </div>
                     <div class="order-courier">
-                        <small>Kurier: <span th:text="${order.courier?.fullName}">Kurier</span></small>
+                        <small>Kuriér: <span th:text="${order.courier?.fullName}">Kuriér</span></small>
                     </div>
                     <form th:action="@{/rozvoz/{id}/dorucena(id=${order.id})}" method="post">
-                        <button type="submit" class="btn btn-primary btn-block">Oznacit ako dorucenu</button>
+                        <button type="submit" class="btn btn-primary btn-block">Označiť ako doručenú</button>
                     </form>
                 </div>
             </section>

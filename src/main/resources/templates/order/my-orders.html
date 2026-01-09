@@ -3,58 +3,77 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/main}">
 <head>
-    <title>Moje objednavky</title>
+    <title>Moje objednávky</title>
 </head>
 <body>
     <div layout:fragment="content">
-        <h1>Moje objednavky</h1>
+        <h1>Moje objednávky</h1>
 
-        <div th:if="${orders == null or orders.content.isEmpty()}" class="no-orders">
-            <p>Zatial nemate ziadne objednavky.</p>
-            <a th:href="@{/pizza}" class="btn btn-primary">Objednat pizzu</a>
+        <div th:if="${orders.isEmpty()}" class="empty-cart">
+            <div class="empty-state-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <path d="M21 8v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"></path>
+                    <path d="M21 8H3l2-4h14l2 4z"></path>
+                    <path d="M12 12v9"></path>
+                </svg>
+            </div>
+            <p>Zatiaľ nemáte žiadne objednávky.</p>
+            <a th:href="@{/pizza}" class="btn btn-primary">Prejsť na ponuku</a>
         </div>
 
-        <div th:if="${orders != null and !orders.content.isEmpty()}">
+        <div th:if="${!orders.isEmpty()}">
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Cislo</th>
-                        <th>Datum</th>
-                        <th>Polozky</th>
+                        <th>Číslo</th>
+                        <th>Dátum</th>
+                        <th>Položky</th>
                         <th>Suma</th>
                         <th>Stav</th>
                         <th>Akcie</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="order : ${orders.content}">
-                        <td th:text="'#' + ${order.id}">ID</td>
-                        <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}">Datum</td>
-                        <td th:text="${order.totalItems + ' ks'}">Polozky</td>
-                        <td th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2) + ' EUR'}">Suma</td>
+                    <tr th:each="order : ${orders}">
+                        <td><strong th:text="'#' + ${order.id}">1</strong></td>
+                        <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}">Dátum</td>
                         <td>
-                            <span class="status-badge" 
-                                  th:classappend="${order.status.name()}"
-                                  th:text="${order.status.displayName}">Stav</span>
+                            <span th:each="item, stat : ${order.items}">
+                                <span th:text="${item.quantity + 'x ' + item.pizzaName}">Pizza</span>
+                                <span th:if="${!stat.last}">, </span>
+                            </span>
+                        </td>
+                        <td th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2) + ' €'}">0.00</td>
+                        <td>
+                            <span class="tag tag-neutral" th:text="${order.status.displayName}"
+                                  th:classappend="${order.status.name() == 'DORUCENA'} ? 'tag-success' : 
+                                                  (${order.status.name() == 'ZRUSENA'} ? 'tag-danger' : '')"
+                                  >Stav</span>
                         </td>
                         <td>
-                            <a th:href="@{/moje-objednavky/{id}(id=${order.id})}" class="btn btn-sm btn-primary">Detail</a>
+                            <a th:href="@{/moje-objednavky/{id}(id=${order.id})}" class="btn btn-small btn-secondary">Detail</a>
+                            <form th:if="${order.status.cancellable}" 
+                                  th:action="@{/moje-objednavky/{id}/zrusit(id=${order.id})}" method="post" class="inline">
+                                <button type="submit" class="btn btn-danger btn-small" 
+                                        onclick="return confirm('Naozaj chcete zrušiť túto objednávku?')">Zrušiť</button>
+                            </form>
                         </td>
                     </tr>
                 </tbody>
             </table>
 
-            <nav th:if="${orders.totalPages > 1}" class="pagination">
-                <a th:if="${currentPage > 0}" 
-                   th:href="@{/moje-objednavky(page=${currentPage - 1})}" 
-                   class="btn btn-secondary">&laquo;</a>
-                
-                <span th:text="'Strana ' + (${currentPage} + 1) + ' z ' + ${orders.totalPages}"></span>
-                
-                <a th:if="${currentPage < orders.totalPages - 1}" 
-                   th:href="@{/moje-objednavky(page=${currentPage + 1})}" 
-                   class="btn btn-secondary">&raquo;</a>
-            </nav>
+            <div th:if="${orders.totalPages > 1}" class="pagination">
+                <a th:if="${!orders.first}" th:href="@{/moje-objednavky(page=${orders.number - 1})}" 
+                   class="page-link">« Predošlá</a>
+                <span th:each="i : ${#numbers.sequence(0, orders.totalPages - 1)}">
+                    <a th:href="@{/moje-objednavky(page=${i})}" 
+                       th:text="${i + 1}"
+                       th:classappend="${i == orders.number} ? 'active' : ''"
+                       class="page-link"></a>
+                </span>
+                <a th:if="${!orders.last}" th:href="@{/moje-objednavky(page=${orders.number + 1})}" 
+                   class="page-link">Ďalšia »</a>
+            </div>
         </div>
     </div>
 </body>

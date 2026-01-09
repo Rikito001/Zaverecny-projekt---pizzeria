@@ -3,31 +3,27 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/main}">
 <head>
-    <title>Sprava tagov</title>
+    <title>Správa tagov</title>
 </head>
 <body>
     <div layout:fragment="content">
-        <h1>Sprava tagov</h1>
+        <h1>Správa tagov</h1>
 
         <div class="admin-section">
-            <h2>Pridat novy tag</h2>
+            <h2>Pridať nový tag</h2>
             <form th:action="@{/admin/tagy}" th:object="${tag}" method="post" class="inline-form">
-                <input type="text" th:field="*{name}" placeholder="Nazov tagu" required class="form-control">
+                <input type="text" th:field="*{name}" placeholder="Názov tagu" required class="form-control" style="width: 200px;">
                 <input type="color" th:field="*{color}" class="form-control color-input">
-                <button type="submit" class="btn btn-success">Pridat</button>
+                <button type="submit" class="btn btn-success">Pridať</button>
             </form>
-            <div th:if="${#fields.hasErrors('*')}" class="error">
-                <span th:each="err : ${#fields.errors('*')}" th:text="${err}"></span>
-            </div>
         </div>
 
         <table class="table">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Nazov</th>
+                    <th>Názov</th>
                     <th>Farba</th>
-                    <th>Pocet pizz</th>
                     <th>Akcie</th>
                 </tr>
             </thead>
@@ -39,18 +35,17 @@
                         <span class="color-preview" th:style="'background-color:' + ${t.color}"></span>
                         <span th:text="${t.color}">#000000</span>
                     </td>
-                    <td th:text="${t.pizzas.size()}">0</td>
                     <td>
                         <form th:action="@{/admin/tagy/{id}/vymazat(id=${t.id})}" method="post" class="inline">
                             <button type="submit" class="btn btn-danger btn-small" 
-                                    onclick="return confirm('Naozaj vymazat tag?')">Vymazat</button>
+                                    onclick="return confirm('Naozaj vymazať tag?')">Vymazať</button>
                         </form>
                     </td>
                 </tr>
             </tbody>
         </table>
 
-        <a th:href="@{/admin}" class="btn btn-secondary">Spat na dashboard</a>
+        <a th:href="@{/admin}" class="btn btn-secondary">← Späť na dashboard</a>
     </div>
 </body>
 </html>

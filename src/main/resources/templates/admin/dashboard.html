@@ -3,45 +3,45 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/main}">
 <head>
-    <title>Administracia</title>
+    <title>Administrácia</title>
 </head>
 <body>
     <div layout:fragment="content">
-        <h1>Administracia</h1>
+        <h1>Administrácia</h1>
 
         <div class="dashboard-stats">
             <div class="stat-card">
-                <h3>Cakajuce objednavky</h3>
+                <h3>Čakajúce objednávky</h3>
                 <span class="stat-number" th:text="${pendingOrdersCount}">0</span>
-                <a th:href="@{/kuchyna}" class="btn btn-small">Zobrazit</a>
+                <a th:href="@{/kuchyna}" class="btn btn-small btn-primary">Zobraziť</a>
             </div>
             <div class="stat-card">
-                <h3>Aktivne objednavky</h3>
+                <h3>Aktívne objednávky</h3>
                 <span class="stat-number" th:text="${activeOrders}">0</span>
-                <a th:href="@{/admin/objednavky}" class="btn btn-small">Zobrazit</a>
+                <a th:href="@{/admin/objednavky}" class="btn btn-small btn-secondary">Zobraziť</a>
             </div>
             <div class="stat-card">
-                <h3>Pouzivatelia</h3>
+                <h3>Používatelia</h3>
                 <span class="stat-number" th:text="${totalUsers}">0</span>
-                <a th:href="@{/admin/pouzivatelia}" class="btn btn-small">Spravovat</a>
+                <a th:href="@{/admin/pouzivatelia}" class="btn btn-small btn-secondary">Spravovať</a>
             </div>
             <div class="stat-card">
                 <h3>Pizze v ponuke</h3>
                 <span class="stat-number" th:text="${totalPizzas}">0</span>
-                <a th:href="@{/admin/pizze}" class="btn btn-small">Spravovat</a>
+                <a th:href="@{/admin/pizze}" class="btn btn-small btn-secondary">Spravovať</a>
             </div>
         </div>
 
         <div class="admin-menu">
-            <h2>Rychle odkazy</h2>
+            <h2>Rýchle odkazy</h2>
             <ul class="admin-links">
-                <li><a th:href="@{/admin/pouzivatelia}">Sprava pouzivatelov</a></li>
-                <li><a th:href="@{/admin/objednavky}">Sprava objednavok</a></li>
-                <li><a th:href="@{/admin/pizze}">Sprava pizz</a></li>
-                <li><a th:href="@{/pizza/nova}">Pridat novu pizzu</a></li>
-                <li><a th:href="@{/admin/tagy}">Sprava tagov</a></li>
-                <li><a th:href="@{/admin/ingrediencie}">Sprava ingrediencii</a></li>
-                <li><a th:href="@{/kuchyna}">Kuchyna</a></li>
+                <li><a th:href="@{/admin/pouzivatelia}">Správa používateľov</a></li>
+                <li><a th:href="@{/admin/objednavky}">Správa objednávok</a></li>
+                <li><a th:href="@{/admin/pizze}">Správa pizz</a></li>
+                <li><a th:href="@{/pizza/nova}">Pridať novú pizzu</a></li>
+                <li><a th:href="@{/admin/tagy}">Správa tagov</a></li>
+                <li><a th:href="@{/admin/ingrediencie}">Správa ingrediencií</a></li>
+                <li><a th:href="@{/kuchyna}">Kuchyňa</a></li>
                 <li><a th:href="@{/rozvoz}">Rozvoz</a></li>
             </ul>
         </div>

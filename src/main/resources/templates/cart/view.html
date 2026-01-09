@@ -3,15 +3,22 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/main}">
 <head>
-    <title>Kosik</title>
+    <title>Košík</title>
 </head>
 <body>
     <div layout:fragment="content">
-        <h1>Vas nakupny kosik</h1>
+        <h1>Nákupný košík</h1>
 
         <div th:if="${cartItems == null or cartItems.isEmpty()}" class="empty-cart">
-            <p>Vas kosik je prazdny.</p>
-            <a th:href="@{/pizza}" class="btn btn-primary">Prezriet ponuku</a>
+            <div class="empty-state-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="9" cy="20" r="1.8"></circle>
+                    <circle cx="17" cy="20" r="1.8"></circle>
+                    <path d="M3 4h2l2.2 10.5a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.6L22 8H7"></path>
+                </svg>
+            </div>
+            <p>Váš košík je prázdny.</p>
+            <a th:href="@{/pizza}" class="btn btn-primary">Prejsť na ponuku</a>
         </div>
 
         <div th:if="${cartItems != null and !cartItems.isEmpty()}">
@@ -19,50 +26,47 @@
                 <thead>
                     <tr>
                         <th>Pizza</th>
-                        <th>Velkost</th>
-                        <th>Cena/ks</th>
-                        <th>Pocet</th>
+                        <th>Veľkosť</th>
+                        <th>Cena za kus</th>
+                        <th>Počet</th>
                         <th>Spolu</th>
                         <th>Akcie</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="item : ${cartItems}">
-                        <td>
-                            <strong th:text="${item.pizzaSize.pizza.name}">Pizza</strong>
-                        </td>
-                        <td th:text="${item.pizzaSize.sizeName + ' (' + item.pizzaSize.diameterCm + ' cm)'}">Velkost</td>
-                        <td th:text="${#numbers.formatDecimal(item.pizzaSize.price, 1, 2) + ' EUR'}">Cena</td>
+                        <td th:text="${item.pizzaSize.pizza.name}">Pizza</td>
+                        <td th:text="${item.pizzaSize.sizeName}">Veľkosť</td>
+                        <td th:text="${#numbers.formatDecimal(item.pizzaSize.price, 1, 2) + ' €'}">Cena</td>
                         <td>
                             <form th:action="@{/kosik/aktualizovat/{id}(id=${item.id})}" method="post" class="quantity-form">
                                 <input type="number" name="quantity" th:value="${item.quantity}" min="1" max="10" class="quantity-input">
-                                <button type="submit" class="btn btn-sm btn-secondary">Aktualizovat</button>
+                                <button type="submit" class="btn btn-small btn-secondary">Aktualizovať</button>
                             </form>
                         </td>
-                        <td th:text="${#numbers.formatDecimal(item.totalPrice, 1, 2) + ' EUR'}">Spolu</td>
+                        <td th:text="${#numbers.formatDecimal(item.totalPrice, 1, 2) + ' €'}">Spolu</td>
                         <td>
                             <form th:action="@{/kosik/odstranit/{id}(id=${item.id})}" method="post">
-                                <button type="submit" class="btn btn-sm btn-danger">Odstranit</button>
+                                <button type="submit" class="btn btn-danger btn-small">Odstrániť</button>
                             </form>
                         </td>
                     </tr>
                 </tbody>
                 <tfoot>
-                    <tr>
-                        <td colspan="4" class="text-right"><strong>Celkom:</strong></td>
-                        <td colspan="2"><strong th:text="${#numbers.formatDecimal(cartTotal, 1, 2) + ' EUR'}">0.00 EUR</strong></td>
+                    <tr class="cart-total">
+                        <td colspan="4"><strong>Celkom:</strong></td>
+                        <td colspan="2"><strong th:text="${#numbers.formatDecimal(cartTotal, 1, 2) + ' €'}">0.00 €</strong></td>
                     </tr>
                 </tfoot>
             </table>
 
             <div class="cart-actions">
                 <form th:action="@{/kosik/vyprazdnit}" method="post" class="inline">
-                    <button type="submit" class="btn btn-warning" 
-                            onclick="return confirm('Naozaj chcete vyprazdnit kosik?')">Vyprazdnit kosik</button>
+                    <button type="submit" class="btn btn-secondary" 
+                            onclick="return confirm('Naozaj chcete vyprázdniť košík?')">Vyprázdniť košík</button>
                 </form>
-                
-                <a th:href="@{/pizza}" class="btn btn-secondary">Pokracovat v nakupe</a>
-                <a th:href="@{/objednavka/nova}" class="btn btn-primary btn-large">Pokracovat k objednavke</a>
+                <a th:href="@{/pizza}" class="btn btn-secondary">Pokračovať v nákupe</a>
+                <a th:href="@{/objednavka/nova}" class="btn btn-primary btn-large">Prejsť k objednávke</a>
             </div>
         </div>
     </div>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Registrácia</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="auth-container">
+            <h1>Registrácia</h1>
+
+            <form th:action="@{/registracia}" th:object="${user}" method="post" class="auth-form">
+                <div class="form-group">
+                    <label for="email">Email: *</label>
+                    <input type="email" id="email" th:field="*{email}" class="form-control" required
+                           placeholder="vas@email.sk">
+                    <div th:if="${#fields.hasErrors('email')}" class="error" th:errors="*{email}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="firstName">Meno: *</label>
+                    <input type="text" id="firstName" th:field="*{firstName}" class="form-control" required
+                           placeholder="Ján">
+                    <div th:if="${#fields.hasErrors('firstName')}" class="error" th:errors="*{firstName}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="lastName">Priezvisko: *</label>
+                    <input type="text" id="lastName" th:field="*{lastName}" class="form-control" required
+                           placeholder="Novák">
+                    <div th:if="${#fields.hasErrors('lastName')}" class="error" th:errors="*{lastName}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Telefón:</label>
+                    <input type="tel" id="phone" th:field="*{phone}" class="form-control" 
+                           placeholder="+421 9XX XXX XXX">
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Adresa:</label>
+                    <input type="text" id="address" th:field="*{address}" class="form-control"
+                           placeholder="Ulica a číslo">
+                </div>
+
+                <div class="form-group">
+                    <label for="city">Mesto:</label>
+                    <input type="text" id="city" th:field="*{city}" class="form-control"
+                           placeholder="Bratislava">
+                </div>
+
+                <div class="form-group">
+                    <label for="postalCode">PSČ:</label>
+                    <input type="text" id="postalCode" th:field="*{postalCode}" class="form-control" 
+                           placeholder="811 01">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Heslo: *</label>
+                    <input type="password" id="password" th:field="*{password}" class="form-control" required minlength="8"
+                           placeholder="Minimálne 8 znakov">
+                    <div th:if="${#fields.hasErrors('password')}" class="error" th:errors="*{password}"></div>
+                    <small>Heslo musí mať minimálne 8 znakov</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Potvrdenie hesla: *</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required
+                           placeholder="Zopakujte heslo">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Zaregistrovať sa</button>
+            </form>
+
+            <p class="auth-link">
+                Už máte účet? <a th:href="@{/prihlasenie}">Prihláste sa</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

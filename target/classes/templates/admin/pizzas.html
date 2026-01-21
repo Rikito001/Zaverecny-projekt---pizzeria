@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Správa pizz</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <h1>Správa pizz</h1>
+
+        <div class="admin-actions">
+            <a th:href="@{/pizza/nova}" class="btn btn-success">+ Pridať novú pizzu</a>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Obrázok</th>
+                    <th>Názov</th>
+                    <th>Tagy</th>
+                    <th>Cena od</th>
+                    <th>Stav</th>
+                    <th>Akcie</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="pizza : ${pizzas}" th:classappend="${!pizza.active} ? 'inactive'">
+                    <td>
+                        <img th:src="${pizza.imageUrl ?: '/images/pizza-default.jpg'}" 
+                             th:alt="${pizza.name}" class="table-thumbnail">
+                    </td>
+                    <td>
+                        <strong th:text="${pizza.name}">Pizza</strong><br>
+                        <small th:text="${pizza.slug}">slug</small>
+                    </td>
+                    <td>
+                        <span th:each="tag : ${pizza.tags}" 
+                              th:text="${tag.name}" 
+                              th:style="'background-color:' + ${tag.color}"
+                              class="tag tag-small"></span>
+                    </td>
+                    <td th:text="${pizza.lowestPrice != null ? #numbers.formatDecimal(pizza.lowestPrice, 1, 2) + ' €' : '-'}">0.00</td>
+                    <td>
+                        <span th:if="${pizza.active}" class="status-active">Aktívna</span>
+                        <span th:if="${!pizza.active}" class="status-inactive">Neaktívna</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/pizza/{slug}(slug=${pizza.slug})}" class="btn btn-small btn-secondary">Zobraziť</a>
+                        <a th:href="@{/pizza/{id}/upravit(id=${pizza.id})}" class="btn btn-small btn-warning">Upraviť</a>
+                        <form th:action="@{/pizza/{id}/vymazat(id=${pizza.id})}" method="post" class="inline">
+                            <button type="submit" class="btn btn-danger btn-small" 
+                                    onclick="return confirm('Naozaj vymazať pizzu?')">Vymazať</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <a th:href="@{/admin}" class="btn btn-secondary">← Späť na dashboard</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Objednávka</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="breadcrumb">
+            <a th:href="@{/moje-objednavky}">Moje objednávky</a> &raquo; 
+            <span th:text="'Objednávka #' + ${order.id}">Objednávka</span>
+        </div>
+
+        <h1 th:text="'Objednávka #' + ${order.id}">Objednávka</h1>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+            <div class="admin-section">
+                <h2>Detaily objednávky</h2>
+                <table class="table">
+                    <tr>
+                        <th>Stav:</th>
+                        <td>
+                            <span class="tag" th:text="${order.status.displayName}" style="background-color: #6c757d;"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Vytvorená:</th>
+                        <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}">Dátum</td>
+                    </tr>
+                    <tr>
+                        <th>Adresa doručenia:</th>
+                        <td th:text="${order.deliveryAddress + ', ' + order.deliveryCity}">Adresa</td>
+                    </tr>
+                    <tr>
+                        <th>Telefón:</th>
+                        <td th:text="${order.deliveryPhone}">Telefón</td>
+                    </tr>
+                    <tr th:if="${order.note}">
+                        <th>Poznámka:</th>
+                        <td th:text="${order.note}">Poznámka</td>
+                    </tr>
+                    <tr th:if="${order.cook}">
+                        <th>Pripravuje:</th>
+                        <td th:text="${order.cook.fullName}">Kuchár</td>
+                    </tr>
+                    <tr th:if="${order.courier}">
+                        <th>Doručuje:</th>
+                        <td th:text="${order.courier.fullName}">Kuriér</td>
+                    </tr>
+                </table>
+
+                <div th:if="${order.status.cancellable}" style="margin-top: 20px;">
+                    <form th:action="@{/moje-objednavky/{id}/zrusit(id=${order.id})}" method="post">
+                        <button type="submit" class="btn btn-danger" 
+                                onclick="return confirm('Naozaj chcete zrušiť túto objednávku?')">Zrušiť objednávku</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="admin-section">
+                <h2>Položky objednávky</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Pizza</th>
+                            <th>Veľkosť</th>
+                            <th>Počet</th>
+                            <th>Cena</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${order.items}">
+                            <td th:text="${item.pizzaName}">Pizza</td>
+                            <td th:text="${item.sizeName}">Veľkosť</td>
+                            <td th:text="${item.quantity}">1</td>
+                            <td th:text="${#numbers.formatDecimal(item.unitPrice * item.quantity, 1, 2) + ' €'}">0.00</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="cart-total">
+                            <td colspan="3"><strong>Celkom:</strong></td>
+                            <td><strong th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2) + ' €'}">0.00</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div class="back-link">
+            <a th:href="@{/moje-objednavky}" class="btn btn-secondary">← Späť na objednávky</a>
+        </div>
+    </div>
+</body>
+</html>

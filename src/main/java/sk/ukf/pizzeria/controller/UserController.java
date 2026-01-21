@@ -25,9 +25,9 @@ public class UserController {
 
     @GetMapping("/prihlasenie")
     public String loginPage(@RequestParam(required = false) String chyba, Model model) {
-        if (chyba != null) {
-            model.addAttribute("error", "Nespravny email alebo heslo");
-        }
+//        if (chyba != null) {
+//            model.addAttribute("error", "Nespravny email alebo heslo");
+//        }
         return "user/login";
     }
 

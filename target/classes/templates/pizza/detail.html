@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/main}">
+<head>
+    <title th:text="${pizza.name}">Pizza</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="breadcrumb">
+            <a th:href="@{/}">Domov</a> &raquo; 
+            <a th:href="@{/pizza}">Ponuka</a> &raquo; 
+            <span th:text="${pizza.name}">Pizza</span>
+        </div>
+
+        <div class="pizza-detail">
+            <div class="pizza-detail-image">
+                <img th:src="${pizza.imageUrl ?: '/images/pizza-default.jpg'}" th:alt="${pizza.name}">
+            </div>
+            
+            <div class="pizza-detail-info">
+                <div class="pizza-tags">
+                    <span th:each="tag : ${pizza.tags}" 
+                          th:text="${tag.name}" 
+                          th:style="'background-color:' + ${tag.color}"
+                          class="tag"></span>
+                </div>
+                
+                <h1 th:text="${pizza.name}">Názov pizze</h1>
+                
+                <p class="pizza-description" th:text="${pizza.description}">Popis pizze</p>
+
+                <div class="ingredients-section">
+                    <h3>Ingrediencie</h3>
+                    <div class="ingredients-list">
+                        <span th:each="ing : ${pizza.ingredients}" 
+                              th:text="${ing.name}"
+                              class="ingredient-tag"></span>
+                    </div>
+                    <p th:if="${pizza.ingredients.isEmpty()}" style="color: #666;">
+                        Ingrediencie nie sú uvedené.
+                    </p>
+                </div>
+
+                <div sec:authorize="isAuthenticated()" class="order-section">
+                    <h3>Objednať</h3>
+                    <form th:action="@{/kosik/pridat}" method="post" class="order-form">
+                        <input type="hidden" name="pizzaId" th:value="${pizza.id}">
+                        
+                        <div class="form-group">
+                            <label for="pizzaSizeId">Veľkosť:</label>
+                            <select name="pizzaSizeId" id="pizzaSizeId" class="form-control" required>
+                                <option value="">-- Vyberte veľkosť --</option>
+                                <option th:each="size : ${pizza.sizes}" 
+                                        th:value="${size.id}" 
+                                        th:text="${size.sizeName + ' (' + size.diameterCm + ' cm) - ' + #numbers.formatDecimal(size.price, 1, 2) + ' €'}">
+                                </option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="quantity">Počet:</label>
+                            <input type="number" name="quantity" id="quantity" value="1" min="1" max="10" class="form-control" style="width: 100px;">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-large">Pridať do košíka</button>
+                    </form>
+                </div>
+
+                <div sec:authorize="isAnonymous()" class="login-prompt">
+                    <p>Pre objednanie sa musíte <a th:href="@{/prihlasenie}">prihlásiť</a> alebo <a th:href="@{/registracia}">zaregistrovať</a>.</p>
+                </div>
+
+                <div class="sizes-table" style="margin-top: 32px;">
+                    <h3>Dostupné veľkosti</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Veľkosť</th>
+                                <th>Priemer</th>
+                                <th>Cena</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="size : ${pizza.sizes}">
+                                <td th:text="${size.sizeName}">Veľkosť</td>
+                                <td th:text="${size.diameterCm + ' cm'}">Priemer</td>
+                                <td th:text="${#numbers.formatDecimal(size.price, 1, 2) + ' €'}">Cena</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="back-link">
+            <a th:href="@{/pizza}" class="btn btn-secondary">← Späť na ponuku</a>
+        </div>
+    </div>
+</body>
+</html>

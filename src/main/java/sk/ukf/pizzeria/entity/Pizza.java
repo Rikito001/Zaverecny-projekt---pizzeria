@@ -41,7 +41,7 @@ public class Pizza {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "pizza", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "pizza", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @OrderBy("price ASC")
     private List<PizzaSize> sizes = new ArrayList<>();
 
@@ -67,14 +67,16 @@ public class Pizza {
 
     @PrePersist
     protected void onCreate() {
-        generateSlug();
+        if (slug == null || slug.isEmpty()) {
+            generateSlug();
+        }
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        generateSlug();
+        // Slug negenerujeme automaticky - rieši to service
         updatedAt = LocalDateTime.now();
     }
 

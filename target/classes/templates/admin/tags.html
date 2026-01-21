@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Správa tagov</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <h1>Správa tagov</h1>
+
+        <div class="admin-section">
+            <h2>Pridať nový tag</h2>
+            <form th:action="@{/admin/tagy}" th:object="${tag}" method="post" class="inline-form">
+                <input type="text" th:field="*{name}" placeholder="Názov tagu" required class="form-control" style="width: 200px;">
+                <input type="color" th:field="*{color}" class="form-control color-input">
+                <button type="submit" class="btn btn-success">Pridať</button>
+            </form>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Názov</th>
+                    <th>Farba</th>
+                    <th>Akcie</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="t : ${tags}">
+                    <td th:text="${t.id}">1</td>
+                    <td th:text="${t.name}">Tag</td>
+                    <td>
+                        <span class="color-preview" th:style="'background-color:' + ${t.color}"></span>
+                        <span th:text="${t.color}">#000000</span>
+                    </td>
+                    <td>
+                        <form th:action="@{/admin/tagy/{id}/vymazat(id=${t.id})}" method="post" class="inline">
+                            <button type="submit" class="btn btn-danger btn-small" 
+                                    onclick="return confirm('Naozaj vymazať tag?')">Vymazať</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <a th:href="@{/admin}" class="btn btn-secondary">← Späť na dashboard</a>
+    </div>
+</body>
+</html>

@@ -18,6 +18,7 @@ import sk.ukf.pizzeria.service.IngredientService;
 import sk.ukf.pizzeria.service.PizzaService;
 import sk.ukf.pizzeria.service.TagService;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/pizza")
@@ -85,6 +86,8 @@ public class PizzaController {
     @PreAuthorize("hasRole('ADMIN')")
     public String savePizza(@Valid @ModelAttribute("pizza") Pizza pizza,
                            BindingResult bindingResult,
+                           @RequestParam(required = false) List<Long> ingredientIds,
+                           @RequestParam(required = false) List<Long> tagIds,
                            Model model,
                            RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
@@ -93,9 +96,9 @@ public class PizzaController {
             return "pizza/form";
         }
 
-        pizzaService.save(pizza);
-        redirectAttributes.addFlashAttribute("message", "Pizza bola uspesne ulozena");
-        return "redirect:/pizza";
+        Pizza savedPizza = pizzaService.saveWithRelations(pizza, ingredientIds, tagIds);
+        redirectAttributes.addFlashAttribute("message", "Pizza bola úspešne vytvorená. Teraz môžete pridať veľkosti.");
+        return "redirect:/pizza/" + savedPizza.getId() + "/upravit";
     }
 
     @GetMapping("/{id}/upravit")
@@ -112,6 +115,8 @@ public class PizzaController {
     public String updatePizza(@PathVariable Long id,
                              @Valid @ModelAttribute("pizza") Pizza pizza,
                              BindingResult bindingResult,
+                             @RequestParam(required = false) List<Long> ingredientIds,
+                             @RequestParam(required = false) List<Long> tagIds,
                              Model model,
                              RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
@@ -120,16 +125,16 @@ public class PizzaController {
             return "pizza/form";
         }
 
-        pizzaService.update(id, pizza);
-        redirectAttributes.addFlashAttribute("message", "Pizza bola uspesne aktualizovana");
-        return "redirect:/pizza";
+        pizzaService.updateWithRelations(id, pizza, ingredientIds, tagIds);
+        redirectAttributes.addFlashAttribute("message", "Pizza bola úspešne aktualizovaná");
+        return "redirect:/pizza/" + id + "/upravit";
     }
 
     @PostMapping("/{id}/vymazat")
     @PreAuthorize("hasRole('ADMIN')")
     public String deletePizza(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         pizzaService.delete(id);
-        redirectAttributes.addFlashAttribute("message", "Pizza bola uspesne vymazana");
+        redirectAttributes.addFlashAttribute("message", "Pizza bola úspešne vymazaná");
         return "redirect:/pizza";
     }
 
@@ -142,7 +147,17 @@ public class PizzaController {
                          RedirectAttributes redirectAttributes) {
         PizzaSize size = new PizzaSize(sizeName, price, diameterCm);
         pizzaService.addSize(id, size);
-        redirectAttributes.addFlashAttribute("message", "Velkost bola pridana");
+        redirectAttributes.addFlashAttribute("message", "Veľkosť bola pridaná");
+        return "redirect:/pizza/" + id + "/upravit";
+    }
+
+    @PostMapping("/{id}/velkost/{sizeId}/vymazat")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String removeSize(@PathVariable Long id,
+                            @PathVariable Long sizeId,
+                            RedirectAttributes redirectAttributes) {
+        pizzaService.removeSize(id, sizeId);
+        redirectAttributes.addFlashAttribute("message", "Veľkosť bola odstránená");
         return "redirect:/pizza/" + id + "/upravit";
     }
 }

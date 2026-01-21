@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Správa používateľov</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <h1>Správa používateľov</h1>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Meno</th>
+                    <th>Email</th>
+                    <th>Rola</th>
+                    <th>Stav</th>
+                    <th>Registrácia</th>
+                    <th>Akcie</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}" th:classappend="${!user.active} ? 'inactive'">
+                    <td th:text="${user.id}">1</td>
+                    <td th:text="${user.fullName}">Meno</td>
+                    <td th:text="${user.email}">Email</td>
+                    <td>
+                        <form th:action="@{/admin/pouzivatelia/{id}/rola(id=${user.id})}" method="post" class="inline-form">
+                            <select name="role" class="form-control-small" onchange="this.form.submit()">
+                                <option th:each="role : ${roles}" 
+                                        th:value="${role}" 
+                                        th:text="${role.displayName}"
+                                        th:selected="${role == user.role}"></option>
+                            </select>
+                        </form>
+                    </td>
+                    <td>
+                        <span th:if="${user.active}" class="status-active">Aktívny</span>
+                        <span th:if="${!user.active}" class="status-inactive">Neaktívny</span>
+                    </td>
+                    <td th:text="${#temporals.format(user.createdAt, 'dd.MM.yyyy')}">Dátum</td>
+                    <td>
+                        <form th:action="@{/admin/pouzivatelia/{id}/aktivovat(id=${user.id})}" method="post" class="inline">
+                            <button type="submit" class="btn btn-small" 
+                                    th:text="${user.active} ? 'Deaktivovať' : 'Aktivovať'">Prepnúť</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <a th:href="@{/admin}" class="btn btn-secondary">← Späť na dashboard</a>
+    </div>
+</body>
+</html>

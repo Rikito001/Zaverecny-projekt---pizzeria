@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="sk" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Môj profil</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <h1>Môj profil</h1>
+
+        <form th:action="@{/profil}" th:object="${user}" method="post" class="form">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" th:value="${user.email}" class="form-control" disabled>
+                <small>Email nie je možné zmeniť</small>
+            </div>
+
+            <div class="form-group">
+                <label for="firstName">Meno: *</label>
+                <input type="text" id="firstName" th:field="*{firstName}" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="lastName">Priezvisko: *</label>
+                <input type="text" id="lastName" th:field="*{lastName}" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Telefón:</label>
+                <input type="tel" id="phone" th:field="*{phone}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="address">Adresa:</label>
+                <input type="text" id="address" th:field="*{address}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="city">Mesto:</label>
+                <input type="text" id="city" th:field="*{city}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="postalCode">PSČ:</label>
+                <input type="text" id="postalCode" th:field="*{postalCode}" class="form-control">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Uložiť zmeny</button>
+                <a th:href="@{/profil/heslo}" class="btn btn-secondary">Zmeniť heslo</a>
+            </div>
+        </form>
+
+        <div class="profile-info">
+            <p><strong>Rola:</strong> <span th:text="${user.role.displayName}">Zákazník</span></p>
+            <p><strong>Registrovaný od:</strong> <span th:text="${#temporals.format(user.createdAt, 'dd.MM.yyyy')}">Dátum</span></p>
+        </div>
+    </div>
+</body>
+</html>
